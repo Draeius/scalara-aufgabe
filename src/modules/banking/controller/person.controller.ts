@@ -14,13 +14,13 @@ export class PersonController {
      * If no valid ID is provided, retrieves all people.
      *
      * @param {string} id (Optional) The ID of the person to retrieve. Should be a positive integer.
-     * @returns {Promise<Person[] | Person | null>} A promise that resolves to:
+     * @returns {Promise<Person[] | Person>} A promise that resolves to:
      *          - A single Person object if a valid ID is provided.
      *          - An array of all Person objects if no valid ID is provided.
      *          - Null if the ID is invalid or no person is found.
      */
     @Get()
-    public async getPeople(@Query("id") id?: string): Promise<Person[] | Person | null> {
+    public async getPeople(@Query("id") id?: string): Promise<Person[] | Person> {
         const parsedId = parseInt(id);
 
         if (!isNaN(parsedId) && parsedId > 0) { // the ID is valid

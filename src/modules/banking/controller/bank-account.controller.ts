@@ -34,13 +34,13 @@ export class BankAccountController {
      * Validates the person ID, retrieves the corresponding Person object, and fetches all associated bank accounts.
      *
      * @param {string} personId - The ID of the person whose bank accounts are to be retrieved.
-     * @returns {Promise<BankAccount[] | null>} A promise that resolves to:
+     * @returns {Promise<BankAccount[]>} A promise that resolves to:
      *          - An array of BankAccount objects owned by the specified person.
      *          - Null if the person ID is invalid or the person has no associated bank accounts.
      * @throws {HttpException} If the provided ID is not valid or there is no such person.
      */
     @Get(":personId")
-    public async getBankAccountForPerson(@Param("personId") personId: string): Promise<BankAccount[] | null> {
+    public async getBankAccountForPerson(@Param("personId") personId: string): Promise<BankAccount[]> {
         const person = await this.personService.validateAndFetchPerson(personId);
         return this.bankAccountService.fetchBankAccountsForPerson(person);
     }

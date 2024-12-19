@@ -18,14 +18,14 @@ export class BankTransactionController {
      * If an ID is provided, validates the ID and retrieves the corresponding transaction.
      *
      * @param {string} id - (Optional) The ID of the transaction to retrieve.
-     * @returns {Promise<BankTransaction[] | BankTransaction | null>} A promise that resolves to:
+     * @returns {Promise<BankTransaction[] | BankTransaction>} A promise that resolves to:
      *          - An array of all BankTransaction objects if no ID is provided.
      *          - A single BankTransaction object if a valid ID is provided.
      *          - Null if the ID is invalid or no transaction is found.
      * @throws {HttpException} If there is an ID and the provided ID is not valid.
      */
     @Get()
-    public async getTransactions(@Query("id") id?: string): Promise<BankTransaction[] | BankTransaction | null> {
+    public async getTransactions(@Query("id") id?: string): Promise<BankTransaction[] | BankTransaction> {
         if (!id) {
             return this.transactionService.fetchAllTransactions();
         }

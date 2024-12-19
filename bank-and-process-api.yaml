@@ -32,7 +32,6 @@ paths:
                     items:
                       $ref: '#/components/schemas/BankAccount'
                   - $ref: '#/components/schemas/BankAccount'
-                  - type: null
         '422':
           description: Invalid IBAN or request parameters
 
@@ -82,7 +81,6 @@ paths:
                     items:
                       $ref: '#/components/schemas/BankTransaction'
                   - $ref: '#/components/schemas/BankTransaction'
-                  - type: null
         '422':
           description: Invalid ID or request parameters
 
@@ -155,7 +153,6 @@ paths:
                     items:
                       $ref: '#/components/schemas/Person'
                   - $ref: '#/components/schemas/Person'
-                  - type: null
         '422':
           description: Invalid ID or request parameters
 
