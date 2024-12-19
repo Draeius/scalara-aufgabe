@@ -14,7 +14,10 @@ process user data, compute financial metrics, and calculate borrowing capacities
   **Example:**
   If I have 100€, friend A has 120€ and friend B has 150€, the maximum amount I could borrow
   would be 50€.
-- There are other transactions outside of borrowing.
+- There are other transactions outside of borrowing. The task defined lending but did not exclude transactions outside
+  of lending.
+- As each transaction is related to an account, it is possible to send money to outside sources, but not to get money
+  from outside.
 
 ## Edge Cases
 
@@ -22,9 +25,9 @@ process user data, compute financial metrics, and calculate borrowing capacities
   As the IBAN the transaction is going to is not specified as relation, it is only a string. As such it is possible
   to have external IBANs. The server handles this by hinting it in the console and only processing the sender side.
 - Sending money to the same IBAN it is coming from
-  Because of the way this is handled, the money would be deducted first and then added again, so nothing happens.
+  The server will skip transactions to the same account.
 - Two friends both have a negative net worth
-  This will work, two friends with negative net worth can lend each other money.
+  This will work, two friends with negative net worth can lend each other money. Transactions will be processed regardless.
 
 ---
 
@@ -65,7 +68,7 @@ The deployment is done with docker-compose. It will pull a postgres image and ru
 seed it with data and set up the server.
 
 ### Docker Compose
-Docker compose can be started with:
+Assuming Docker is installed and running, docker compose can be started with:
 
 ``docker-compose up``
 
