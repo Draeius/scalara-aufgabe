@@ -10,7 +10,7 @@ COPY / /usr/local/tmp/server
 WORKDIR /usr/local/tmp/server
 RUN npm install
 
-# Only build in the build stage
+# Build the server
 RUN npm run build
 
 FROM node:22.3 AS run
