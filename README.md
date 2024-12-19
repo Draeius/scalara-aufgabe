@@ -1,8 +1,8 @@
 # Backend Application for Bank Data Processing
 
 This project provides a backend solution to process and analyze a large dataset of bank information. It includes APIs to
-process user data, compute financial metrics, and calculate borrowing capacities. The application is designed using *
-*NestJS**, **TypeORM**, **Docker**, and integrates with tools like **OpenAPI** for documentation.
+process user data, compute financial metrics, and calculate borrowing capacities. The application is designed using 
+**NestJS**, **TypeORM**, **Docker**, and has an **OpenAPI** documentation for the endpoints.
 
 ---
 
@@ -14,6 +14,17 @@ process user data, compute financial metrics, and calculate borrowing capacities
   **Example:**
   If I have 100€, friend A has 120€ and friend B has 150€, the maximum amount I could borrow
   would be 50€.
+- There are other transactions outside of borrowing.
+
+## Edge Cases
+
+- External IBANs
+  As the IBAN the transaction is going to is not specified as relation, it is only a string. As such it is possible
+  to have external IBANs. The server handles this by hinting it in the console and only processing the sender side.
+- Sending money to the same IBAN it is coming from
+  Because of the way this is handled, the money would be deducted first and then added again, so nothing happens.
+- Two friends both have a negative net worth
+  This will work, two friends with negative net worth can lend each other money.
 
 ---
 
@@ -56,7 +67,9 @@ seed it with data and set up the server.
 ### Docker Compose
 Docker compose can be started with:
 
-``docker-compose up -d``
+``docker-compose up``
+
+This may take a while. If it is done you will see the server setting up the routes.
 
 ### Seeding Data
 The data with which the postgres database is seeded can be found under ``src/modules/db/seeds/CSV``.
@@ -64,8 +77,8 @@ The data with which the postgres database is seeded can be found under ``src/mod
 ## Testing
 
 1. The application can be tested with any tool that is able to send GET and POST requests.
-An openAPI specification can be found in the project root
-   under ``bank-and-process-api.yaml``.
+An OpenAPI specification can be found in the project root under ``bank-and-process-api.yaml``.
 
    The server is listening to: ``http://localhost:3000/``
 2. Mock Data is automatically loaded when the container is set up.
+3. Direct database access is possible under port ``5432`` with username **postgres** and password **tsRV764S08sd**
