@@ -3,13 +3,22 @@ import {Person} from "./person.entity";
 
 @Entity("bank_account")
 export class BankAccount {
-    @PrimaryColumn("varchar", {length: 34}) // IBAN as the primary key
+    /**
+     * This bank account's IBAN.
+     * It's the primary key.
+     */
+    @PrimaryColumn("varchar", {length: 34})
     iban: string;
 
-    @Column("float") // could also be a decimal with scale 2 and varying precision
+    /**
+     * This bank account's balance.
+     */
+    @Column("float")
     balance: number;
 
-    // Many-to-One relation: BankAccount belongs to a single Person
+    /**
+     * This bank account's owner.
+     */
     @ManyToOne(() => Person, (person) => person.bankAccounts)
     @JoinColumn({name: "owner_id"}) // Foreign key column
     owner: Person;
