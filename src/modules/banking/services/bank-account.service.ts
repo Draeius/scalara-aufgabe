@@ -66,19 +66,25 @@ export class BankAccountService {
      * @param {BankTransaction} transaction The transaction to process
      */
     public async updateBalance(transaction: BankTransaction): Promise<void> {
+        if(transaction.senderAccount.iban == transaction.targetIban) {
+            return; // nothing to do as the transaction would not change anything.
+        }
+
         const targetAccount = await this.bankAccountRepository.findOneBy({iban: transaction.targetIban});
         // Also get the sender account from the database because of persistence issues.
         // Not ideal, as it will lead to more requests to the db for bigger datasets.
-        const senderAccount = await this.bankAccountRepository.findOneBy({iban: transaction.senderAccount.iban});
+        const senderAccount         = await this.bankAccountRepository.findOneBy({iban: transaction.senderAccount.iban});
 
+        const toSave: BankAccount[] = [senderAccount];
         senderAccount.balance -= transaction.amount;
 
         if (!targetAccount) {
-            console.log("IBAN is external"); // if external IBANs are possible, error otherwise
+            console.log(`IBAN ${transaction.targetIban} is external`); // assuming external IBANs are possible, error otherwise
         } else {
             targetAccount.balance += transaction.amount;
+            toSave.push(targetAccount);
         }
 
-        await this.bankAccountRepository.save([targetAccount, senderAccount]);
+        await this.bankAccountRepository.save(toSave);
     }
 }
