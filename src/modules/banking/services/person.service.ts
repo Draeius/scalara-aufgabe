@@ -120,8 +120,8 @@ export class PersonService {
      * @private
      */
     private calculateNetWorth(person: Person): number {
-        return Math.max(person.bankAccounts.reduce((netWorth: number, account: BankAccount) => {
+        return person.bankAccounts.reduce((netWorth: number, account: BankAccount) => {
             return netWorth + account.balance;
-        }, 0), 0);
+        }, 0);
     }
 }
