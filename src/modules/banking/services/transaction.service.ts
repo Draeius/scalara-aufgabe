@@ -1,4 +1,4 @@
-import {HttpException, Injectable} from "@nestjs/common";
+import {Injectable} from "@nestjs/common";
 import {EntityManager, Repository} from "typeorm";
 import {BankTransaction} from "../../../entities/bank-transaction.entity";
 import {BankAccountService} from "./bank-account.service";
