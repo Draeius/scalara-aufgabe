@@ -21,7 +21,6 @@ export class BankTransactionController {
      * @returns {Promise<BankTransaction[] | BankTransaction>} A promise that resolves to:
      *          - An array of all BankTransaction objects if no ID is provided.
      *          - A single BankTransaction object if a valid ID is provided.
-     *          - Null if the ID is invalid or no transaction is found.
      * @throws {HttpException} If there is an ID and the provided ID is not valid.
      */
     @Get()

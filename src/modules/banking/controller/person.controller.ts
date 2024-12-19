@@ -17,17 +17,14 @@ export class PersonController {
      * @returns {Promise<Person[] | Person>} A promise that resolves to:
      *          - A single Person object if a valid ID is provided.
      *          - An array of all Person objects if no valid ID is provided.
-     *          - Null if the ID is invalid or no person is found.
+     * @throws {HttpException} If the ID is not valid or there is no person with that ID.
      */
     @Get()
     public async getPeople(@Query("id") id?: string): Promise<Person[] | Person> {
-        const parsedId = parseInt(id);
-
-        if (!isNaN(parsedId) && parsedId > 0) { // the ID is valid
-            return this.personService.fetchPerson(parsedId);
+        if (id) {
+            return this.personService.validateAndFetchPerson(id);
         }
-
-        // no valid ID provided, return all people
+        // no ID provided, return all people
         return this.personService.fetchAllPeople();
     }
 

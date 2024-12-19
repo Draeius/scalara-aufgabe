@@ -17,10 +17,14 @@ export class ProcessService {
      * of a positive integer.
      * @returns {Promise<string>} - A promise that resolves to an object containing a success message.
      * @throws {HttpException} - Throws an exception if the processId is invalid (not provided, not a number,
-     * or less than or equal to 0).
+     * or less than or equal to 0 or greater than 3).
      */
     public async validateAndExecuteProcess(processId: string): Promise<string> {
-        return this.process(ValidationUtil.parseID(processId));
+        const id = ValidationUtil.parseID(processId);
+        if (id > 3) {
+            throw new HttpException("There are only three processes", 422);
+        }
+        return this.process(id);
     }
 
     /**
