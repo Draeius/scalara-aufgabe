@@ -18,7 +18,6 @@ export class BankAccountController {
      * @returns {Promise<BankAccount[] | BankAccount | null>} A promise that resolves to:
      *          - An array of all BankAccount objects if no IBAN is provided.
      *          - A single BankAccount object if a valid IBAN is provided.
-     *          - Null if the IBAN is invalid or no account is found.
      * @throws {HttpException} If there is an ID but the provided ID is not valid.
      */
     @Get()
@@ -34,9 +33,8 @@ export class BankAccountController {
      * Validates the person ID, retrieves the corresponding Person object, and fetches all associated bank accounts.
      *
      * @param {string} personId - The ID of the person whose bank accounts are to be retrieved.
-     * @returns {Promise<BankAccount[]>} A promise that resolves to:
-     *          - An array of BankAccount objects owned by the specified person.
-     *          - Null if the person ID is invalid or the person has no associated bank accounts.
+     * @returns {Promise<BankAccount[]>} A promise that resolves to an array of BankAccount objects owned by
+     * the specified person.
      * @throws {HttpException} If the provided ID is not valid or there is no such person.
      */
     @Get(":personId")

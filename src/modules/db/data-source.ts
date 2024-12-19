@@ -5,6 +5,9 @@ import {BankAccount} from "../../entities/bank-account.entity";
 import {BankTransaction} from "../../entities/bank-transaction.entity";
 import {SeederOptions} from "typeorm-extension";
 
+/**
+ * The configuration for the database and the seeder.
+ */
 export const dataSourceOptions: DataSourceOptions & SeederOptions = {
     type:        "postgres",
     host:        process.env.DB_HOST,
