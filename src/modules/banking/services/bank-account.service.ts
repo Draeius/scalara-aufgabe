@@ -75,8 +75,9 @@ export class BankAccountService {
 
         if (!targetAccount) {
             console.log("IBAN is external"); // if external IBANs are possible, error otherwise
+        } else {
+            targetAccount.balance += transaction.amount;
         }
-        targetAccount.balance += transaction.amount;
 
         await this.bankAccountRepository.save([targetAccount, senderAccount]);
     }
