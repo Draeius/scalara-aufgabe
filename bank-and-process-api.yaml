@@ -1,0 +1,297 @@
+openapi: 3.0.3
+info:
+  title: Bank and Process API
+  version: 1.0.0
+  description: API for managing bank accounts, transactions, persons, and processes.
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /account:
+    get:
+      summary: Retrieve bank accounts
+      description: Retrieves all bank accounts if no IBAN is provided. If an IBAN is provided, validates it
+        and retrieves the corresponding bank account.
+      parameters:
+        - name: iban
+          in: query
+          description: The IBAN of the bank account to retrieve (optional).
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/BankAccount'
+                  - $ref: '#/components/schemas/BankAccount'
+                  - type: null
+        '422':
+          description: Invalid IBAN or request parameters
+
+  /account/{personId}:
+    get:
+      summary: Retrieve bank accounts by person
+      description: Validates the person ID and retrieves all bank accounts associated with the specified person.
+      parameters:
+        - name: personId
+          in: path
+          required: true
+          description: The ID of the person.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccount'
+        '422':
+          description: Person not found or invalid ID
+
+  /transactions:
+    get:
+      summary: Retrieve transactions
+      description: Retrieves all transactions if no ID is provided. If an ID is provided, validates it and retrieves
+        the corresponding transaction.
+      parameters:
+        - name: id
+          in: query
+          description: The ID of the transaction to retrieve (optional).
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/BankTransaction'
+                  - $ref: '#/components/schemas/BankTransaction'
+                  - type: null
+        '422':
+          description: Invalid ID or request parameters
+
+  /transactions/person/{personId}:
+    get:
+      summary: Retrieve transactions by person
+      description: Validates the person ID and retrieves all transactions associated with the specified person.
+      parameters:
+        - name: personId
+          in: path
+          required: true
+          description: The ID of the person.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankTransaction'
+        '422':
+          description: Person not found or invalid ID
+
+  /transactions/account/{iban}:
+    get:
+      summary: Retrieve transactions by account
+      description: Validates the IBAN and retrieves all transactions associated with the specified bank account.
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankTransaction'
+        '422':
+          description: Bank account not found or invalid IBAN
+
+  /person:
+    get:
+      summary: Retrieve persons
+      description: Retrieves all persons if no valid ID is provided. If a valid ID is provided,
+        retrieves the corresponding person.
+      parameters:
+        - name: id
+          in: query
+          description: The ID of the person to retrieve (optional).
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/Person'
+                  - $ref: '#/components/schemas/Person'
+                  - type: null
+        '422':
+          description: Invalid ID or request parameters
+
+  /person/max_borrow/{id}:
+    get:
+      summary: Retrieve maximum borrowable amount for a person
+      description: |
+        Validates the provided person ID and retrieves the maximum borrowable amount.
+        Ensures the person exists and calculates the maximum amount they can borrow based on their financial profile.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the person whose maximum borrowable amount is to be retrieved.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaxBorrowResponse'
+        '404':
+          description: Person not found or invalid ID
+
+  /process/{processId}:
+    post:
+      summary: Start a process (Webhook)
+      description: Validates the provided process ID and starts the corresponding processes.
+        This endpoint acts as a webhook.
+      parameters:
+        - name: processId
+          in: path
+          required: true
+          description: The ID of the process to execute. Process IDs start with 1 and count up to 3
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessResponse'
+        '422':
+          description: Invalid process ID
+
+components:
+  schemas:
+    ProcessResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Indicates the success and executed processes.
+
+    MaxBorrowResponse:
+      type: object
+      properties:
+        maxBorrow:
+          type: number
+          format: float
+          description: The maximum borrowable amount for the person.
+
+    BankAccount:
+      type: object
+      properties:
+        iban:
+          type: string
+          description: The International Bank Account Number (IBAN) of the account.
+        balance:
+          type: number
+          format: float
+          description: The current balance of the bank account.
+        owner:
+          nullable: true
+          description: The owner of the bank account.
+
+    BankTransaction:
+      type: object
+      properties:
+        id:
+          type: number
+          format: integer
+          description: The unique identifier for the bank transaction.
+        amount:
+          type: number
+          format: float
+          description: The amount involved in the transaction.
+        processed:
+          type: boolean
+          description: Indicates if the transaction has been processed.
+        senderAccount:
+          nullable: true
+          description: The bank account that sent the transaction.
+        targetIban:
+          type: string
+          description: The IBAN of the target account for the transaction.
+
+    Person:
+      type: object
+      properties:
+        id:
+          type: number
+          format: integer
+          description: The unique identifier for the person.
+        name:
+          type: string
+          description: The name of the person.
+        email:
+          type: string
+          description: The email address of the person.
+        netWorth:
+          type: number
+          format: float
+          description: The net worth of the person.
+        maxBorrow:
+          type: number
+          format: float
+          description: The maximum amount the person can borrow.
+        hasFriend:
+          nullable: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Person'
+          description: A list of friends for the person.
+        friendOf:
+          nullable: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Person'
+          description: Inverse side of the List of friends for the person.
+        bankAccounts:
+          nullable: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccount'
+          description: A list of bank accounts owned by the person.
